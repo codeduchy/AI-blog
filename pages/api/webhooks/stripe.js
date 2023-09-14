@@ -3,6 +3,8 @@ import stripeInit from 'stripe';
 import verifyStripe from '@webdeveducation/next-verify-stripe';
 import clientPromise from '../../../lib/mongodb';
 
+console.log('STRIPE');
+
 const cors = Cors({
   allowMethods: ['POST', 'HEAD'],
 });
