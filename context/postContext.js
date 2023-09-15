@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState } from "react";
 
 const PostsContext = React.createContext({});
 
@@ -8,8 +8,20 @@ export const PostsProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [noMorePosts, setNoMorePosts] = useState(false);
 
+  const deletePost = useCallback((postId) => {
+    setPosts((value) => {
+      const newPosts = [];
+      value.forEach((post) => {
+        if (post._id !== postId) {
+          newPosts.push(post);
+        }
+      });
+      return newPosts;
+    });
+  }, []);
+
   const setPostsFromSSR = useCallback((postsFromSSR = []) => {
-    console.log('POSTS FROM SSR:', postsFromSSR);
+    console.log("POSTS FROM SSR:", postsFromSSR);
     // setPosts(postsFromSSR);
     setPosts((value) => {
       const newPosts = [...value];
@@ -26,9 +38,9 @@ export const PostsProvider = ({ children }) => {
   const getPosts = useCallback(
     async ({ lastPostDate, getNewerPosts = false }) => {
       const result = await fetch(`/api/getPosts`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'content-type': 'application/json',
+          "content-type": "application/json",
         },
         body: JSON.stringify({ lastPostDate, getNewerPosts }),
       });
@@ -55,7 +67,7 @@ export const PostsProvider = ({ children }) => {
 
   return (
     <PostsContext.Provider
-      value={{ posts, setPostsFromSSR, getPosts, noMorePosts }}
+      value={{ posts, setPostsFromSSR, getPosts, noMorePosts, deletePost }}
     >
       {children}
     </PostsContext.Provider>

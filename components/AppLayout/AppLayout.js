@@ -1,11 +1,11 @@
-import { useUser } from '@auth0/nextjs-auth0/client';
-import Image from 'next/image';
-import { faCoins } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next/link';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Logo } from '../Logo';
-import { useContext, useEffect } from 'react';
-import PostsContext from '../../context/postContext';
+import { useUser } from "@auth0/nextjs-auth0/client";
+import Image from "next/image";
+import { faCoins } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Logo } from "../Logo";
+import { useContext, useEffect } from "react";
+import PostsContext from "../../context/postContext";
 
 export const AppLayout = ({
   children,
@@ -30,8 +30,8 @@ export const AppLayout = ({
   }, [postsFromSSR, setPostsFromSSR, postId, postCreated, getPosts]);
 
   return (
-    <div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
-      <div className="flex flex-col text-white overflow-hidden">
+    <div className="grid grid-cols-[auto_1fr] h-screen max-h-screen">
+      <div className="flex flex-col text-white overflow-hidden w-[300px]">
         <div className="bg-slate-800 px-2">
           <Logo />
           <Link href="/post/new" className="btn">
@@ -48,7 +48,7 @@ export const AppLayout = ({
               key={post._id}
               href={`/post/${post._id}`}
               className={`py-1 border border-white/0 block text-ellipsis overflow-hidden whitespace-nowrap my-1 px-2 bg-white/10 cursor-pointer rounded-sm ${
-                postId === post._id ? 'bg-white/20 border-white' : ''
+                postId === post._id ? "bg-white/20 border-white" : ""
               }`}
             >
               {post.topic}
@@ -66,7 +66,7 @@ export const AppLayout = ({
           )}
         </div>
         <div className="bg-cyan-800 flex items-center gap-2 border-t border-t-black/50 h-20 px-2">
-          {' '}
+          {" "}
           {user ? (
             <>
               <div className="min-w-[50px]">
