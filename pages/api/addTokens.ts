@@ -30,9 +30,17 @@ export default async function handler(
     line_items: lineItems,
     mode: "payment",
     success_url: `${protocol}${host}/success`,
+    payment_intent_data: {
+      metadata: {
+        sub: user.sub,
+      },
+    },
+    metadata: {
+      sub: user.sub,
+    },
   });
 
-  console.log("token-user", user);
+  console.log("[AddTokens user]: ", user);
 
   const client = await clientPromise;
   const db = client.db("BLOGAI");

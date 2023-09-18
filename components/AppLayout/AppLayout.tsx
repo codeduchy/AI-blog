@@ -22,6 +22,7 @@ export const AppLayout = ({
 }: appProp) => {
   const { user } = useUser();
   const [modal, setModal] = useState(false);
+  console.log(user);
 
   const handleClick = () => {
     setModal(!modal);

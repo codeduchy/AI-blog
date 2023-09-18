@@ -3,6 +3,8 @@ import clientPromise from "../lib/mongodb";
 import { GetServerSidePropsContext } from "next";
 
 export const getAppProps = async (ctx: GetServerSidePropsContext) => {
+  console.log("[getAppProps]");
+
   const userSession = await getSession(ctx.req, ctx.res);
   const client = await clientPromise;
   const db = client.db("BLOGAI");
