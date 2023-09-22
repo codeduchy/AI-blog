@@ -1,17 +1,151 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import clientPromise from "../../lib/mongodb";
+import { getAppProps } from "../../utils/getAppProps";
+import { ObjectId } from "mongodb";
+import { NextParsedUrlQuery } from "next/dist/server/request-meta";
+import { AppLayout } from "../../components";
+import { AppProps } from "next/app";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHashtag } from "@fortawesome/free-solid-svg-icons";
+import { useContext, useState } from "react";
+import PostsContext from "../../context/postsContext";
+import { useRouter } from "next/router";
 
-export default function Post() {
+type PostProps = AppProps & {
+  id?: string;
+  title?: string;
+  postContent: string;
+  metaDescription: string;
+  keywords: string;
+};
+
+export default function Post(props: PostProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { deletePost } = useContext(PostsContext);
+  const router = useRouter();
+
+  const handleDeleteConfirm = async () => {
+    try {
+      const response = await fetch(`/api/deletePost`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ postId: props.id }),
+      });
+      const json = await response.json();
+      if (json.success) {
+        deletePost(props.id);
+        router.replace("/post/new");
+      }
+    } catch (error) {}
+  };
+
   return (
-    <div>
-      <h1>Post page</h1>
+    <div className="overflow-auto h-full px-4 pb-10">
+      <div className="max-w-screen-sm mx-auto ">
+        <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
+          SEO title and meta description
+        </div>
+        <div className="p-4 my-2 border border-stone-200">
+          <div className="text-blue-600 text-2xl font-bold">{props.title}</div>
+          <div className="mt-2">{props.metaDescription}</div>
+        </div>
+        <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
+          Keywords
+        </div>
+        <div className="flex flex-wrap pt-2 gap-1">
+          {props.keywords.split(",").map((keyword, i) => (
+            <div key={i} className="p-2 rounded-full bg-slate-800 text-white">
+              <FontAwesomeIcon icon={faHashtag} />
+              {keyword}
+            </div>
+          ))}
+        </div>
+        <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
+          Blog post
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: props.postContent }}></div>
+        <div className="my-4">
+          {!showDeleteConfirm && (
+            <button
+              className="btn bg-red-600 hover:bg-red-700 text-white"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              Delete post
+            </button>
+          )}
+          {showDeleteConfirm && (
+            <div>
+              <p className="p-2 bg=red-300 text-center">
+                Are you sure you want to delete this post? This action is
+                irreversible
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  className="btn bg-stone-600 hover:bg-stone-700"
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  cancel
+                </button>
+                <button
+                  className="btn bg-red-600 hover:bg-red-700"
+                  onClick={handleDeleteConfirm}
+                >
+                  confirm delete
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
+Post.getLayout = (page: React.ReactElement, pageProps: AppProps) => {
+  return <AppLayout {...pageProps}>{page}</AppLayout>;
+};
+
 export const getServerSideProps = withPageAuthRequired({
-  async getServerSideProps() {
+  async getServerSideProps(ctx) {
+    ctx.res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=30, stale-while-revalidate=59"
+    );
+    const props = await getAppProps(ctx);
+
+    const userSession = await getSession(ctx.req, ctx.res);
+    const client = await clientPromise;
+    const db = client.db("BLOGAI");
+    const user = await db.collection("users").findOne({
+      auth0Id: userSession.user.sub,
+    });
+
+    const post = await db.collection("posts").findOne({
+      _id: new ObjectId(ctx.params.postId.toString()),
+      userId: user._id,
+    });
+
+    if (!post) {
+      return {
+        redirect: {
+          destination: "/post/new",
+          permanent: false,
+        },
+      };
+    }
+
     return {
-      props: {},
+      props: {
+        id: ctx.params.postId,
+        postContent: post.postContent,
+        title: post.title,
+        metaDescription: post.metaDescription,
+        keywords: post.keywords,
+        postCreated: post.created.toString(),
+        ...props,
+      },
     };
   },
 });

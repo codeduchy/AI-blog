@@ -4,6 +4,10 @@ import { AppProps } from "next/app";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { NextPage } from "next";
 import MenuContext from "../context/menuContext";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import { PostsProvider } from "../context/postsContext";
+config.autoAddCss = false;
 
 const dmSans = DM_Sans({
   weight: ["400", "500", "700"],
@@ -30,7 +34,9 @@ function MyApp({ Component, pageProps }: LayoutApp) {
   return (
     <UserProvider>
       <MenuContext>
-        {getLayout(<Component {...pageProps} />, pageProps)}
+        <PostsProvider>
+          {getLayout(<Component {...pageProps} />, pageProps)}
+        </PostsProvider>
       </MenuContext>
     </UserProvider>
   );
