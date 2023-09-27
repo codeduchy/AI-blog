@@ -2,7 +2,6 @@ import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import clientPromise from "../../lib/mongodb";
 import { getAppProps } from "../../utils/getAppProps";
 import { ObjectId } from "mongodb";
-import { NextParsedUrlQuery } from "next/dist/server/request-meta";
 import { AppLayout } from "../../components";
 import { AppProps } from "next/app";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
