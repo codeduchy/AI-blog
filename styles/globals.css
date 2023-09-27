@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .btn {
+    @apply disabled:bg-green-200  hover:no-underline bg-green-500 disabled:cursor-not-allowed tracking-wider w-full text-center font-bold cursor-pointer uppercase px-4 py-2 rounded-md hover:bg-green-600 transition-colors block;
+  }
+}
+
 @layer base {
   a:hover {
     @apply underline;
@@ -31,7 +37,6 @@
   h5 {
     @apply text-lg;
   }
-
   p {
     @apply my-2;
   }
@@ -44,18 +49,10 @@
   ul {
     list-style-type: disc;
   }
-
   ol {
     list-style-type: decimal;
   }
-
   li {
     @apply my-2;
-  }
-}
-
-@layer components {
-  .btn {
-    @apply disabled:bg-green-200 disabled:cursor-not-allowed hover:no-underline bg-green-500 tracking-wider w-full text-center font-bold cursor-pointer uppercase px-4 py-2 rounded-md hover:bg-green-600 transition-colors block;
   }
 }
