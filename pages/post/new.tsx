@@ -54,7 +54,7 @@ const NewPost = (props: AppProps) => {
 
   if (!isUser)
     return (
-      <div className="relative px-4 w-11/12 max-w-screen-sm mx-auto -mt-40 sm:mt-10 h-full max-w-screen-sm overflow-hidden">
+      <div className="relative px-4 w-11/12 max-w-screen-sm mx-auto -mt-40 sm:mt-10 h-full overflow-hidden">
         <h4 className="text-center">
           You need to Login in order to generate a blog
         </h4>
