@@ -1,5 +1,5 @@
-import Image from "next/image";
-import HeroImage from "../public/hero.webp";
+// import Image from "next/image";
+// import HeroImage from "../public/hero.webp";
 import Logo from "../components/Logo/Logo";
 import Link from "next/link";
 
